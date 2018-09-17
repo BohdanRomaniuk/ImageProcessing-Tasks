@@ -9,6 +9,7 @@
         Title="Індивідуальне №1" Height="569.388" Width="596.647">
     <Window.Resources>
         <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+        <converters:TimeConverter x:Key="TimeConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -47,21 +48,25 @@
                     <Button Content="Формат TIFF (LZW)" Command="{Binding SaveAsTIFFCommand}" Margin="3" Grid.Column="2"/>
                     <Button Content="Формат JPEG (SE)" Command="{Binding SaveAsJPEGCommand}" Margin="3" Grid.Column="3"/>
                 </Grid>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Колір:            "/>
-                    <RadioButton Content="RGB" Margin="5" Grid.Column="1" IsChecked="True"></RadioButton>
-                    <RadioButton Content="R" Margin="5" Grid.Column="2"></RadioButton>
-                    <RadioButton Content="G" Margin="5" Grid.Column="3"></RadioButton>
-                    <RadioButton Content="B" Margin="5" Grid.Column="4"></RadioButton>
+                    <Label Content="R:" Grid.Column="1"/>
+                    <Label Content="{Binding Color.R}" Grid.Column="2" FontWeight="Bold"/>
+                    <Label Content="G:" Grid.Column="3"/>
+                    <Label Content="{Binding Color.G}" Grid.Column="4" FontWeight="Bold"/>
+                    <Label Content="B:" Grid.Column="5"/>
+                    <Label Content="{Binding Color.B}" Grid.Column="6" FontWeight="Bold"/>
                 </Grid>
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -69,11 +74,11 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Віднімання:  "/>
-                    <Button Content="BMP - BMP (RLE)" Command="{Binding MinusBMPRLECommand}" Margin="3" Grid.Column="1"/>
-                    <Button Content="BMP - TIFF (LZW)" Command="{Binding MinusTIFFCommand}" Margin="3" Grid.Column="2"/>
-                    <Button Content="BMP - JPEG (SE)" Command="{Binding DifferenceJPEGCommand}" Margin="3" Grid.Column="3"/>
+                    <Button Content="BMP - TIFF (LZW)" Command="{Binding BmpDiffTiffCommand}" Margin="3" Grid.Column="1"/>
+                    <Button Content="BMP - JPEG (SE)" Command="{Binding BmpDiffJpegCommand}" Margin="3" Grid.Column="2"/>
+                    <Button Content="TIFF - JPEG (SE)" Command="{Binding TiffDiffJpegCommand}" Margin="3" Grid.Column="3"/>
                 </Grid>
-                <Grid Grid.Row="4">
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -87,8 +92,10 @@
                     <Label Content="Після стискання: " Grid.Column="3"/>
                     <Label Content="{Binding SizeAfterCompressing, Converter={StaticResource FileSizeConverter}}" Grid.Column="4" FontWeight="Bold" Foreground="Green"/>
                 </Grid>
-                <Grid Grid.Row="5">
+                <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -99,16 +106,18 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Час:               "/>
                     <Label Content="Читання: " Grid.Column="1"/>
-                    <Label Content="{Binding ReadingTime}" Grid.Column="1"/>
-                    <Label Content="Кодування: " Grid.Column="3"/>
-                    <Label Content="{Binding CodingTime}" Grid.Column="4"/>
-                    <Label Content="Запис: " Grid.Column="5"/>
-                    <Label Content="{Binding WritingTime}" Grid.Column="6"/>
+                    <Label Content="{Binding ReadingTime, Converter={StaticResource TimeConverter}}" Grid.Column="2" FontWeight="Bold"/>
+                    <Label Content="Декодування: " Grid.Column="3"/>
+                    <Label Content="{Binding DecodingTime, Converter={StaticResource TimeConverter}}" Grid.Column="4" FontWeight="Bold"/>
+                    <Label Content="Кодування: " Grid.Column="5"/>
+                    <Label Content="{Binding EncodingTime, Converter={StaticResource TimeConverter}}" Grid.Column="6" FontWeight="Bold"/>
+                    <Label Content="Запис: " Grid.Column="7"/>
+                    <Label Content="{Binding WritingTime, Converter={StaticResource TimeConverter}}" Grid.Column="8" FontWeight="Bold"/>
                 </Grid>
             </Grid>
         </GroupBox>
         <GroupBox Header="Перегляд зображення" Grid.Row="1" Margin="3">
-            <Image Source="{Binding BmpImage}">
+            <Image Source="{Binding DisplayImage}">
             </Image>
         </GroupBox>
     </Grid>
