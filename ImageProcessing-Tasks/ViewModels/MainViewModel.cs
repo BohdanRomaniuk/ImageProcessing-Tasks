@@ -8,10 +8,12 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.Windows.Interop;
+using System.Threading.Tasks;
 
 namespace ImageProcessing_Tasks.ViewModels
 {
-    public class MainViewModel: INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
         private string imageLocation;
         private long sizeBeforeCompressing;
@@ -19,13 +21,15 @@ namespace ImageProcessing_Tasks.ViewModels
         private Image BmpImage;
         private Image TiffImage;
         private Image JpegImage;
-        private BitmapImage dispayImage;
+        private BitmapSource dispayImage;
 
         private RGB color;
         private int writingTime;
         private int readingTime;
         private double encodingTime;
         private double decodingTime;
+        private int colorType;
+        private int progressMaximum, progressValue;
 
         public string ImageLocation
         {
@@ -63,7 +67,7 @@ namespace ImageProcessing_Tasks.ViewModels
                 OnPropertyChanged(nameof(SizeAfterCompressing));
             }
         }
-        public BitmapImage DisplayImage
+        public BitmapSource DisplayImage
         {
             get
             {
@@ -76,7 +80,7 @@ namespace ImageProcessing_Tasks.ViewModels
             }
         }
 
-        public RGB Color
+        public RGB RGBColor
         {
             get
             {
@@ -85,7 +89,7 @@ namespace ImageProcessing_Tasks.ViewModels
             set
             {
                 color = value;
-                OnPropertyChanged(nameof(Color));
+                OnPropertyChanged(nameof(RGBColor));
             }
         }
         public int ReadingTime
@@ -136,6 +140,42 @@ namespace ImageProcessing_Tasks.ViewModels
                 OnPropertyChanged(nameof(WritingTime));
             }
         }
+        public int ColorType
+        {
+            get
+            {
+                return colorType;
+            }
+            set
+            {
+                colorType = value;
+                OnPropertyChanged(nameof(ColorType));
+            }
+        }
+        public int ProgressMaximum
+        {
+            get
+            {
+                return progressMaximum;
+            }
+            set
+            {
+                progressMaximum = value;
+                OnPropertyChanged(nameof(ProgressMaximum));
+            }
+        }
+        public int ProgressValue
+        {
+            get
+            {
+                return progressValue;
+            }
+            set
+            {
+                progressValue = value;
+                OnPropertyChanged(nameof(ProgressValue));
+            }
+        }
 
         public ICommand ChooseImageCommand { get; private set; }
         public ICommand SaveAsBMPRLECommand { get; private set; }
@@ -157,6 +197,8 @@ namespace ImageProcessing_Tasks.ViewModels
             BmpDiffTiffCommand = new Command(BmpDiffTiff);
             BmpDiffJpegCommand = new Command(BmpDiffJpeg);
             TiffDiffJpegCommand = new Command(TiffDiffJpeg);
+
+            ColorType = 0;
         }
 
         private void ChooseImage(object parametr)
@@ -190,6 +232,8 @@ namespace ImageProcessing_Tasks.ViewModels
                 timer.Stop();
                 WritingTime = timer.Elapsed.Milliseconds;
 
+                DisplayImage = new BitmapImage(new Uri(sfd.FileName));
+
                 timer.Restart();
                 BmpImage = Image.FromFile(sfd.FileName);
                 timer.Stop();
@@ -201,7 +245,7 @@ namespace ImageProcessing_Tasks.ViewModels
                 DecodingTime = timer.Elapsed.TotalMilliseconds;
 
                 timer.Restart();
-                BitmapImage encoded = DisplayImage;
+                BitmapImage encoded = (BitmapImage)DisplayImage;
                 timer.Stop();
                 EncodingTime = timer.Elapsed.TotalMilliseconds;
 
@@ -227,6 +271,8 @@ namespace ImageProcessing_Tasks.ViewModels
                 timer.Stop();
                 WritingTime = timer.Elapsed.Milliseconds;
 
+                DisplayImage = new BitmapImage(new Uri(sfd.FileName));
+
                 timer.Restart();
                 TiffImage = Image.FromFile(sfd.FileName);
                 timer.Stop();
@@ -238,7 +284,7 @@ namespace ImageProcessing_Tasks.ViewModels
                 DecodingTime = timer.Elapsed.TotalMilliseconds;
 
                 timer.Restart();
-                BitmapImage encoded = DisplayImage;
+                BitmapImage encoded = (BitmapImage)DisplayImage;
                 timer.Stop();
                 EncodingTime = timer.Elapsed.TotalMilliseconds;
 
@@ -264,6 +310,8 @@ namespace ImageProcessing_Tasks.ViewModels
                 timer.Stop();
                 WritingTime = timer.Elapsed.Milliseconds;
 
+                DisplayImage = new BitmapImage(new Uri(sfd.FileName));
+
                 timer.Restart();
                 JpegImage = Image.FromFile(sfd.FileName);
                 timer.Stop();
@@ -275,7 +323,7 @@ namespace ImageProcessing_Tasks.ViewModels
                 DecodingTime = timer.Elapsed.TotalMilliseconds;
 
                 timer.Restart();
-                BitmapImage encoded = DisplayImage;
+                BitmapImage encoded = (BitmapImage)DisplayImage;
                 timer.Stop();
                 EncodingTime = timer.Elapsed.TotalMilliseconds;
 
@@ -285,41 +333,56 @@ namespace ImageProcessing_Tasks.ViewModels
 
         private void BmpDiffTiff(object parametr)
         {
-            RGB bmpRGB = GetImageRGB(BmpImage);
-            RGB tiffRGB = GetImageRGB(TiffImage);
-            Color = bmpRGB - tiffRGB;
+            ImagesDifferenceAsync(BmpImage, TiffImage);
         }
 
         private void BmpDiffJpeg(object parametr)
         {
-            RGB bmpRGB = GetImageRGB(BmpImage);
-            RGB jpegRGB = GetImageRGB(JpegImage);
-            Color = bmpRGB - jpegRGB;
-        }
+            ImagesDifferenceAsync(BmpImage, JpegImage);
+        } 
 
         private void TiffDiffJpeg(object parametr)
         {
-            RGB tiffRGB = GetImageRGB(TiffImage);
-            RGB jpegRGB = GetImageRGB(JpegImage);
-            Color = tiffRGB - jpegRGB;
+            ImagesDifferenceAsync(TiffImage, JpegImage);
         }
 
-        private static RGB GetImageRGB(Image img)
+        private async void ImagesDifferenceAsync(Image firstImage, Image secondImage)
         {
-            Bitmap image = new Bitmap(img);
-            int red = 0, blue = 0, green = 0;
-            for (int x = 0; x < image.Width; x++)
+            int width = BmpImage.Width;
+            int height = BmpImage.Height;
+            Bitmap first = (Bitmap)firstImage;
+            Bitmap second = (Bitmap)secondImage;
+            Bitmap diff = new Bitmap(width, height);
+            RGBColor = new RGB();
+
+            ProgressValue = 0;
+            ProgressMaximum = width * height;
+            await Task.Run(() =>
             {
-                for (int y = 0; y < image.Height; y++)
+                int r = 0, g = 0, b = 0;
+                int multiplier = 6;
+                for (int i = 0; i < width; ++i)
                 {
-                    Color pixel = image.GetPixel(x, y);
-                    red += pixel.R;
-                    green += pixel.G;
-                    blue += pixel.B;
+                    for (int j = 0; j < height; ++j)
+                    {
+                        r = (ColorType == 0 || ColorType == 1) ? Math.Abs(first.GetPixel(i, j).R - second.GetPixel(i, j).R) : 0;
+                        g = (ColorType == 0 || ColorType == 2) ? Math.Abs(first.GetPixel(i, j).G - second.GetPixel(i, j).G) : 0;
+                        b = (ColorType == 0 || ColorType == 3) ? Math.Abs(first.GetPixel(i, j).B - second.GetPixel(i, j).B) : 0;
+                        RGBColor.AppendRGB(r, g, b);
+                        r = r * multiplier;
+                        g = g * multiplier;
+                        b = b * multiplier;
+                        r = (r > 255) ? 255 : r;
+                        g = (g > 255) ? 255 : g;
+                        b = (b > 255) ? 255 : b;
+                        diff.SetPixel(i, j, Color.FromArgb(byte.MaxValue, r, g, b));
+                        ProgressValue++;
+                    }
                 }
-            }
-            return new RGB(red, green, blue);
+            });
+            DisplayImage = Imaging.CreateBitmapSourceFromHBitmap(diff.GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(width, height));
         }
+
 
         private static ImageCodecInfo GetEncoderInfo(String mimeType)
         {

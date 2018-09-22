@@ -6,15 +6,17 @@
         xmlns:local="clr-namespace:ImageProcessing_Tasks"
         xmlns:converters="clr-namespace:ImageProcessing_Tasks.Converters"
         mc:Ignorable="d"
-        Title="Індивідуальне №1" Height="569.388" Width="596.647">
+        Title="Індивідуальне №1" Height="620" Width="596.647">
     <Window.Resources>
         <converters:FileSizeConverter x:Key="FileSizeConverter"/>
+        <converters:RadioButtonToIntConverter x:Key="RadioButtonToIntConverter"/>
         <converters:TimeConverter x:Key="TimeConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <GroupBox Header="Функції" Margin="3" Grid.Row="0">
             <Grid>
@@ -51,20 +53,36 @@
                 <Grid Grid.Row="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Колір:            "/>
-                    <Label Content="R:" Grid.Column="1"/>
-                    <Label Content="{Binding Color.R}" Grid.Column="2" FontWeight="Bold"/>
-                    <Label Content="G:" Grid.Column="3"/>
-                    <Label Content="{Binding Color.G}" Grid.Column="4" FontWeight="Bold"/>
-                    <Label Content="B:" Grid.Column="5"/>
-                    <Label Content="{Binding Color.B}" Grid.Column="6" FontWeight="Bold"/>
+                    <Label Content="RGB:" Grid.Column="1"/>
+                    <RadioButton Grid.Column="2" Margin="5" IsChecked="{Binding Path=ColorType, Converter={StaticResource RadioButtonToIntConverter}, ConverterParameter=0}"/>
+                    <Label Content="R:" Grid.Column="3"/>
+                    <RadioButton Grid.Column="4" Margin="5" IsChecked="{Binding Path=ColorType, Converter={StaticResource RadioButtonToIntConverter}, ConverterParameter=1}"/>
+                    <Label Content="G:" Grid.Column="5"/>
+                    <RadioButton Grid.Column="6" Margin="5" IsChecked="{Binding Path=ColorType, Converter={StaticResource RadioButtonToIntConverter}, ConverterParameter=2}"/>
+                    <Label Content="B:" Grid.Column="7"/>
+                    <RadioButton Grid.Column="8" Margin="5" IsChecked="{Binding Path=ColorType, Converter={StaticResource RadioButtonToIntConverter}, ConverterParameter=3}"/>
+                    <Label Content="R:" Grid.Column="9" Margin="20 0 0 0"/>
+                    <Label Content="{Binding RGBColor.R}" Grid.Column="10" FontWeight="Bold"/>
+                    <Label Content="G:" Grid.Column="11"/>
+                    <Label Content="{Binding RGBColor.G}" Grid.Column="12" FontWeight="Bold"/>
+                    <Label Content="B:" Grid.Column="13"/>
+                    <Label Content="{Binding RGBColor.B}" Grid.Column="14" FontWeight="Bold"/>
                 </Grid>
                 <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
@@ -119,6 +137,9 @@
         <GroupBox Header="Перегляд зображення" Grid.Row="1" Margin="3">
             <Image Source="{Binding DisplayImage}">
             </Image>
+        </GroupBox>
+        <GroupBox Header="Прогрес виконання" Grid.Row="2" Margin="3">
+            <ProgressBar Maximum="{Binding ProgressMaximum}" Minimum="0" Height="20" Value="{Binding ProgressValue}"/>
         </GroupBox>
     </Grid>
 </Window>
