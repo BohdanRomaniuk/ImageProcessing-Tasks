@@ -1,15 +1,11 @@
 ﻿using Equalization_and_Filters.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Drawing;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace Equalization_and_Filters.ViewModels
 {
@@ -136,32 +132,44 @@ namespace Equalization_and_Filters.ViewModels
             }
         }
 
-        private void Equalization(object parametr)
+        private async void Equalization(object parametr)
         {
-            Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
-            equalized = Filters.Equalize(copy);
+            await Task.Run(() =>
+            {
+                Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
+                equalized = Filters.Equalize(copy);
+            });
             EqualizedImage = equalized.ConvertToBitmapSource();
         }
 
-        private void Roberts(object parametr)
+        private async void Roberts(object parametr)
         {
-            Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
-            roberts = Filters.Roberts(copy);
+            await Task.Run(() =>
+            {
+                Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
+                roberts = Filters.Roberts(copy);
+            });
             RobertsImage = roberts.ConvertToBitmapSource();
         }
 
 
-        private void Previt(object parametr)
+        private async void Previt(object parametr)
         {
-            Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
-            previt = Filters.Previt(copy);
+            await Task.Run(() =>
+            {
+                Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
+                previt = Filters.Previt(copy);
+            });
             PrevitImage = previt.ConvertToBitmapSource();
         }
 
-        private void Sobel(object parametr)
+        private async void Sobel(object parametr)
         {
-            Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
-            sobel = Filters.Sobel(copy);
+            await Task.Run(() =>
+            {
+                Bitmap copy = input.Clone(new Rectangle(0, 0, input.Width, input.Height), input.PixelFormat);
+                sobel = Filters.Sobel(copy);
+            });
             SobelImage = sobel.ConvertToBitmapSource();
         }
 
