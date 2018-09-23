@@ -135,8 +135,7 @@
             </Grid>
         </GroupBox>
         <GroupBox Header="Перегляд зображення" Grid.Row="1" Margin="3">
-            <Image Source="{Binding DisplayImage}">
-            </Image>
+            <Image Source="{Binding DisplayImage}"/>
         </GroupBox>
         <GroupBox Header="Прогрес виконання" Grid.Row="2" Margin="3">
             <ProgressBar Maximum="{Binding ProgressMaximum}" Minimum="0" Height="20" Value="{Binding ProgressValue}"/>

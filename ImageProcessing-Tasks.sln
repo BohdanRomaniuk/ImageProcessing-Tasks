@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessing-Tasks", "ImageProcessing-Tasks\ImageProcessing-Tasks.csproj", "{EC50D523-F521-452C-A52E-677913295206}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1) Image Converter", "ImageProcessing-Tasks\1) Image Converter.csproj", "{EC50D523-F521-452C-A52E-677913295206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2) Equalization and Filters", "2) Equalization and Filters\2) Equalization and Filters.csproj", "{120B42F7-9F73-4C83-904A-A714A482B1C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EC50D523-F521-452C-A52E-677913295206}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC50D523-F521-452C-A52E-677913295206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC50D523-F521-452C-A52E-677913295206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120B42F7-9F73-4C83-904A-A714A482B1C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120B42F7-9F73-4C83-904A-A714A482B1C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120B42F7-9F73-4C83-904A-A714A482B1C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120B42F7-9F73-4C83-904A-A714A482B1C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

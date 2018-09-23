@@ -1,0 +1,77 @@
+﻿<Window x:Class="Equalization_and_Filters.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Equalization_and_Filters"
+        mc:Ignorable="d"
+        Title="Індивідуальне №2" Height="600" Width="950">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Функції" Margin="3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding ImageLocation}" Margin="3" Width="150"/>
+                        <Button Content="Вибрати" Command="{Binding ChooseImageCommand}" Margin="3" Grid.Column="1"/>
+                    </Grid>
+                    <Button Content="Еквалізація гістограми" Command="{Binding EqualizationCommand}" Margin="3" Grid.Row="1"/>
+                    <Button Content="Зберегти екваліз. зображення" Command="{Binding SaveEqualizedCommand}" Margin="3" Grid.Row="2"/>
+                    <Button Content="Оператор Робертса" Command="{Binding RobertsCommand}" Margin="3" Grid.Row="4"/>
+                    <Button Content="Оператор Превіта" Command="{Binding PrevitCommand}" Margin="3" Grid.Row="5"/>
+                    <Button Content="Оператор Собела" Command="{Binding SobelCommand}" Margin="3" Grid.Row="6"/>
+                    <Button Content="Зберегти Робертса" Command="{Binding SaveRobertsCommand}" Margin="3" Grid.Row="8"/>
+                    <Button Content="Зберегти Превіта" Command="{Binding SavePrevitCommand}" Margin="3" Grid.Row="9"/>
+                    <Button Content="Зберегти Собела" Command="{Binding SaveSobelCommand}" Margin="3" Grid.Row="10"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Вхідне зображення" Margin="3" Grid.Column="1">
+                <Image Source="{Binding InputImage}"/>
+            </GroupBox>
+            <GroupBox Header="Еквалізація гістограми" Margin="3" Grid.Column="2">
+                <Image Source="{Binding EqualizedImage}"/>
+            </GroupBox>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Оператор Робертса" Margin="3">
+                <Image Source="{Binding RobertsImage}"/>
+            </GroupBox>
+            <GroupBox Header="Оператор Превіта" Margin="3" Grid.Column="1">
+                <Image Source="{Binding PrevitImage}"/>
+            </GroupBox>
+            <GroupBox Header="Оператор Собела" Margin="3" Grid.Column="2">
+                <Image Source="{Binding SobelImage}"/>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
