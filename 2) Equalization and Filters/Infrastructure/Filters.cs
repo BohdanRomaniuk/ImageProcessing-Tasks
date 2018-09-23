@@ -57,8 +57,14 @@ namespace Equalization_and_Filters.Infrastructure
             Bitmap bb = original;
             int width = b.Width;
             int height = b.Height;
-            int[,] gx = new int[,] { { 1, -1 }, { 1, 0 } };
-            int[,] gy = new int[,] { { -1, 0 }, { 0, 1 } };
+            int[,] gx = new int[,] {
+                { 1, -1 },
+                { 1,  0 }
+            };
+            int[,] gy = new int[,] { 
+                { -1, 0 },
+                {  0, 1 }
+            };
 
             int[,] allPixR = new int[width, height];
             int[,] allPixG = new int[width, height];
@@ -113,11 +119,14 @@ namespace Equalization_and_Filters.Infrastructure
                         }
                     }
                     if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                        bb.SetPixel(i, j, Color.Black);
-
-                    //bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
+                    {
+                        //bb.SetPixel(i, j, Color.Black);
+                        bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
+                    }
                     else
+                    {
                         bb.SetPixel(i, j, Color.White);
+                    }
                 }
             }
             return bb;
@@ -130,8 +139,16 @@ namespace Equalization_and_Filters.Infrastructure
             Bitmap bb = original;
             int width = b.Width;
             int height = b.Height;
-            int[,] gx = new int[,] { { 1, 0, -1 }, { 1, 0, -1 }, { 1, 0, -1 } };
-            int[,] gy = new int[,] { { -1, -1, -1 }, { 0, 0, 0 }, { 1, 1, 1 } };
+            int[,] gx = new int[,] { 
+                { 1, 0, -1 },
+                { 1, 0, -1 },
+                { 1, 0, -1 }
+            };
+            int[,] gy = new int[,] {
+                { -1, -1, -1 },
+                { 0, 0, 0 },
+                { 1, 1, 1 }
+            };
 
             int[,] allPixR = new int[width, height];
             int[,] allPixG = new int[width, height];
@@ -186,11 +203,14 @@ namespace Equalization_and_Filters.Infrastructure
                         }
                     }
                     if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                        bb.SetPixel(i, j, Color.Black);
-
-                    //bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
+                    {
+                        //bb.SetPixel(i, j, Color.Black);
+                        bb.SetPixel(i, j, Color.FromArgb(allPixR[i, j], allPixG[i, j], allPixB[i, j]));
+                    }
                     else
+                    {
                         bb.SetPixel(i, j, Color.White);
+                    }
                 }
             }
             return bb;
@@ -203,8 +223,16 @@ namespace Equalization_and_Filters.Infrastructure
             Bitmap bb = original;
             int width = b.Width;
             int height = b.Height;
-            int[,] gx = new int[,] { { 1, 0, -1 }, { 2, 0, -2 }, { 1, 0, -1 } };
-            int[,] gy = new int[,] { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
+            int[,] gx = new int[,] { 
+                { 1, 0, -1 },
+                { 2, 0, -2 }, 
+                { 1, 0, -1 }
+            };
+            int[,] gy = new int[,] {
+                { -1, -2, -1 },
+                {  0,  0,  0 },
+                {  1,  2,  1 }
+            };
 
             int[,] allPixR = new int[width, height];
             int[,] allPixG = new int[width, height];
@@ -259,11 +287,14 @@ namespace Equalization_and_Filters.Infrastructure
                         }
                     }
                     if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                        bb.SetPixel(i, j, Color.Black);
-
-                    //bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
+                    {
+                        //bb.SetPixel(i, j, Color.Black);
+                        bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
+                    }
                     else
+                    {
                         bb.SetPixel(i, j, Color.White);
+                    }
                 }
             }
             return bb;
