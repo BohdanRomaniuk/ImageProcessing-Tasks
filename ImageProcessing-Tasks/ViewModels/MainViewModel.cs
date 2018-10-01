@@ -203,8 +203,10 @@ namespace ImageProcessing_Tasks.ViewModels
 
         private void ChooseImage(object parametr)
         {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.Filter = "bmp(*.bmp)|*.bmp";
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "bmp(*.bmp)|*.bmp"
+            };
             if (ofd.ShowDialog() ?? true)
             {
                 DisplayImage = new BitmapImage(new Uri(ofd.FileName));
@@ -228,7 +230,7 @@ namespace ImageProcessing_Tasks.ViewModels
 
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
-                BmpImage.Save(sfd.FileName, ImageFormat.Bmp);
+                BmpImage.Save(sfd.FileName, myImageCodecInfo, myEncoderParameters);
                 timer.Stop();
                 WritingTime = timer.Elapsed.Milliseconds;
 
@@ -255,8 +257,10 @@ namespace ImageProcessing_Tasks.ViewModels
 
         private void SaveAsTIFF(object parametr)
         {
-            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-            sfd.Filter = "tif(*.tif)|*.tif";
+            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "tif(*.tif)|*.tif"
+            };
             if (sfd.ShowDialog() ?? true)
             {
                 ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/tiff"); ;
@@ -294,8 +298,10 @@ namespace ImageProcessing_Tasks.ViewModels
 
         private void SaveAsJPEG(object parametr)
         {
-            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-            sfd.Filter = "jpeg(*.jpeg)|*.jpeg";
+            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "jpeg(*.jpeg)|*.jpeg"
+            };
             if (sfd.ShowDialog() ?? true)
             {
                 ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/jpeg"); ;

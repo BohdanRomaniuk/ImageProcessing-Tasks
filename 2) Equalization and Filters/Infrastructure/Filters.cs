@@ -17,15 +17,15 @@ namespace Equalization_and_Filters.Infrastructure
             byte[] left = new byte[256];
             byte[] right = new byte[256];
             System.Runtime.InteropServices.Marshal.Copy(ptr, grayValues, 0, bytes);
-            for (int i = 0; i < grayValues.Length; i++) ++R[grayValues[i]];
+            for (int i = 0; i < grayValues.Length; ++i) ++R[grayValues[i]];
             int z = 0;
             int Hint = 0;
             int Havg = grayValues.Length / R.Length;
-            for (int i = 0; i < N.Length - 1; i++)
+            for (int i = 0; i < N.Length - 1; ++i)
             {
                 N[i] = 0;
             }
-            for (int j = 0; j < R.Length; j++)
+            for (int j = 0; j < R.Length; ++j)
             {
                 if (z > 255) left[j] = 255;
                 else left[j] = (byte)z;
@@ -40,7 +40,7 @@ namespace Equalization_and_Filters.Infrastructure
 
                 N[j] = (byte)((left[j] + right[j]) / 2);
             }
-            for (int i = 0; i < grayValues.Length; i++)
+            for (int i = 0; i < grayValues.Length; ++i)
             {
                 if (left[grayValues[i]] == right[grayValues[i]]) grayValues[i] = left[grayValues[i]];
                 else grayValues[i] = N[grayValues[i]];
@@ -53,251 +53,233 @@ namespace Equalization_and_Filters.Infrastructure
 
         public static Bitmap Roberts(Bitmap original)
         {
-            Bitmap b = original;
-            Bitmap bb = original;
-            int width = b.Width;
-            int height = b.Height;
-            int[,] gx = new int[,] {
-                { 1, -1 },
+            Bitmap result = new Bitmap(original.Width, original.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int width = original.Width;
+            int height = original.Height;
+
+            int[,] GX = new int[,]
+            {
+                { 0, -1 },
                 { 1,  0 }
             };
-            int[,] gy = new int[,] { 
+            int[,] GY = new int[,]
+            {
                 { -1, 0 },
                 {  0, 1 }
             };
 
-            int[,] allPixR = new int[width, height];
-            int[,] allPixG = new int[width, height];
-            int[,] allPixB = new int[width, height];
-
-            int limit = 128 * 128;
-
-            for (int i = 0; i < width; i++)
+            int[,] R = new int[width, height];
+            int[,] G = new int[width, height];
+            int[,] B = new int[width, height];
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
-                    allPixR[i, j] = b.GetPixel(i, j).R;
-                    allPixG[i, j] = b.GetPixel(i, j).G;
-                    allPixB[i, j] = b.GetPixel(i, j).B;
+                    R[i, j] = original.GetPixel(i, j).R;
+                    G[i, j] = original.GetPixel(i, j).G;
+                    B[i, j] = original.GetPixel(i, j).B;
                 }
             }
 
-            int new_rx = 0, new_ry = 0;
-            int new_gx = 0, new_gy = 0;
-            int new_bx = 0, new_by = 0;
-            int rc, gc, bc;
-            for (int i = 1; i < b.Width - 1; i++)
+            int Rx = 0, Ry = 0;
+            int Gx = 0, Gy = 0;
+            int Bx = 0, By = 0;
+            int RChannel, GChannel, BChannel;
+            for (int i = 1; i < original.Width - 1; ++i)
             {
-                for (int j = 1; j < b.Height - 1; j++)
+                for (int j = 1; j < original.Height - 1; ++j)
                 {
 
-                    new_rx = 0;
-                    new_ry = 0;
-                    new_gx = 0;
-                    new_gy = 0;
-                    new_bx = 0;
-                    new_by = 0;
-                    rc = 0;
-                    gc = 0;
-                    bc = 0;
-
-                    for (int wi = -1; wi < 1; wi++)
+                    Rx = 0;
+                    Ry = 0;
+                    Gx = 0;
+                    Gy = 0;
+                    Bx = 0;
+                    By = 0;
+                    RChannel = 0;
+                    GChannel = 0;
+                    BChannel = 0;
+                    for (int x = -1; x < 1; ++x)
                     {
-                        for (int hw = -1; hw < 1; hw++)
+                        for (int y = -1; y < 1; ++y)
                         {
-                            rc = allPixR[i + hw, j + wi];
-                            new_rx += gx[wi + 1, hw + 1] * rc;
-                            new_ry += gy[wi + 1, hw + 1] * rc;
+                            RChannel = R[i + y, j + x];
+                            Rx += GX[x + 1, y + 1] * RChannel;
+                            Ry += GY[x + 1, y + 1] * RChannel;
 
-                            gc = allPixG[i + hw, j + wi];
-                            new_gx += gx[wi + 1, hw + 1] * gc;
-                            new_gy += gy[wi + 1, hw + 1] * gc;
+                            GChannel = G[i + y, j + x];
+                            Gx += GX[x + 1, y + 1] * GChannel;
+                            Gy += GY[x + 1, y + 1] * GChannel;
 
-                            bc = allPixB[i + hw, j + wi];
-                            new_bx += gx[wi + 1, hw + 1] * bc;
-                            new_by += gy[wi + 1, hw + 1] * bc;
+                            BChannel = B[i + y, j + x];
+                            Bx += GX[x + 1, y + 1] * BChannel;
+                            By += GY[x + 1, y + 1] * BChannel;
                         }
                     }
-                    if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                    {
-                        //bb.SetPixel(i, j, Color.Black);
-                        bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
-                    }
-                    else
-                    {
-                        bb.SetPixel(i, j, Color.White);
-                    }
+                    result.SetPixel(i, j, Color.FromArgb(SatureCast(Rx + Ry), SatureCast(Gx + Gy), SatureCast(Bx + By)));
                 }
             }
-            return bb;
+            return result;
 
         }
 
         public static Bitmap Previt(Bitmap original)
         {
-            Bitmap b = original;
-            Bitmap bb = original;
-            int width = b.Width;
-            int height = b.Height;
-            int[,] gx = new int[,] { 
+            Bitmap result = new Bitmap(original.Width, original.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int width = original.Width;
+            int height = original.Height;
+
+            int[,] GX = new int[,] 
+            { 
                 { 1, 0, -1 },
                 { 1, 0, -1 },
                 { 1, 0, -1 }
             };
-            int[,] gy = new int[,] {
+            int[,] GY = new int[,] 
+            {
                 { -1, -1, -1 },
                 { 0, 0, 0 },
                 { 1, 1, 1 }
             };
 
-            int[,] allPixR = new int[width, height];
-            int[,] allPixG = new int[width, height];
-            int[,] allPixB = new int[width, height];
-
-            int limit = 128 * 128;
-
-            for (int i = 0; i < width; i++)
+            int[,] R = new int[width, height];
+            int[,] G = new int[width, height];
+            int[,] B = new int[width, height];
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
-                    allPixR[i, j] = b.GetPixel(i, j).R;
-                    allPixG[i, j] = b.GetPixel(i, j).G;
-                    allPixB[i, j] = b.GetPixel(i, j).B;
+                    R[i, j] = original.GetPixel(i, j).R;
+                    G[i, j] = original.GetPixel(i, j).G;
+                    B[i, j] = original.GetPixel(i, j).B;
                 }
             }
 
-            int new_rx = 0, new_ry = 0;
-            int new_gx = 0, new_gy = 0;
-            int new_bx = 0, new_by = 0;
-            int rc, gc, bc;
-            for (int i = 1; i < b.Width - 1; i++)
+            int Rx = 0, Ry = 0;
+            int Gx = 0, Gy = 0;
+            int Bx = 0, By = 0;
+            int RChannel, GChannel, BChannel;
+            for (int i = 1; i < original.Width - 1; ++i)
             {
-                for (int j = 1; j < b.Height - 1; j++)
+                for (int j = 1; j < original.Height - 1; ++j)
                 {
 
-                    new_rx = 0;
-                    new_ry = 0;
-                    new_gx = 0;
-                    new_gy = 0;
-                    new_bx = 0;
-                    new_by = 0;
-                    rc = 0;
-                    gc = 0;
-                    bc = 0;
-
-                    for (int wi = -1; wi < 2; wi++)
+                    Rx = 0;
+                    Ry = 0;
+                    Gx = 0;
+                    Gy = 0;
+                    Bx = 0;
+                    By = 0;
+                    RChannel = 0;
+                    GChannel = 0;
+                    BChannel = 0;
+                    for (int x = -1; x < 2; ++x)
                     {
-                        for (int hw = -1; hw < 2; hw++)
+                        for (int y = -1; y < 2; ++y)
                         {
-                            rc = allPixR[i + hw, j + wi];
-                            new_rx += gx[wi + 1, hw + 1] * rc;
-                            new_ry += gy[wi + 1, hw + 1] * rc;
+                            RChannel = R[i + y, j + x];
+                            Rx += GX[x + 1, y + 1] * RChannel;
+                            Ry += GY[x + 1, y + 1] * RChannel;
 
-                            gc = allPixG[i + hw, j + wi];
-                            new_gx += gx[wi + 1, hw + 1] * gc;
-                            new_gy += gy[wi + 1, hw + 1] * gc;
+                            GChannel = G[i + y, j + x];
+                            Gx += GX[x + 1, y + 1] * GChannel;
+                            Gy += GY[x + 1, y + 1] * GChannel;
 
-                            bc = allPixB[i + hw, j + wi];
-                            new_bx += gx[wi + 1, hw + 1] * bc;
-                            new_by += gy[wi + 1, hw + 1] * bc;
+                            BChannel = B[i + y, j + x];
+                            Bx += GX[x + 1, y + 1] * BChannel;
+                            By += GY[x + 1, y + 1] * BChannel;
                         }
                     }
-                    if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                    {
-                        //bb.SetPixel(i, j, Color.Black);
-                        bb.SetPixel(i, j, Color.FromArgb(allPixR[i, j], allPixG[i, j], allPixB[i, j]));
-                    }
-                    else
-                    {
-                        bb.SetPixel(i, j, Color.White);
-                    }
+                    result.SetPixel(i, j, Color.FromArgb(SatureCast(Rx + Ry), SatureCast(Gx + Gy), SatureCast(Bx + By)));
                 }
             }
-            return bb;
-
+            return result;
         }
 
         public static Bitmap Sobel(Bitmap original)
         {
-            Bitmap b = original;
-            Bitmap bb = original;
-            int width = b.Width;
-            int height = b.Height;
-            int[,] gx = new int[,] { 
+            Bitmap result = new Bitmap(original.Width, original.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int width = original.Width;
+            int height = original.Height;
+
+            int[,] GX = new int[,]
+            {
                 { 1, 0, -1 },
-                { 2, 0, -2 }, 
+                { 2, 0, -2 },
                 { 1, 0, -1 }
             };
-            int[,] gy = new int[,] {
+            int[,] GY = new int[,]
+            {
                 { -1, -2, -1 },
                 {  0,  0,  0 },
                 {  1,  2,  1 }
             };
 
-            int[,] allPixR = new int[width, height];
-            int[,] allPixG = new int[width, height];
-            int[,] allPixB = new int[width, height];
-
-            int limit = 128 * 128;
-
-            for (int i = 0; i < width; i++)
+            int[,] R = new int[width, height];
+            int[,] G = new int[width, height];
+            int[,] B = new int[width, height];
+            for (int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < height; ++j)
                 {
-                    allPixR[i, j] = b.GetPixel(i, j).R;
-                    allPixG[i, j] = b.GetPixel(i, j).G;
-                    allPixB[i, j] = b.GetPixel(i, j).B;
+                    R[i, j] = original.GetPixel(i, j).R;
+                    G[i, j] = original.GetPixel(i, j).G;
+                    B[i, j] = original.GetPixel(i, j).B;
                 }
             }
 
-            int new_rx = 0, new_ry = 0;
-            int new_gx = 0, new_gy = 0;
-            int new_bx = 0, new_by = 0;
-            int rc, gc, bc;
-            for (int i = 1; i < b.Width - 1; i++)
+            int Rx = 0, Ry = 0;
+            int Gx = 0, Gy = 0;
+            int Bx = 0, By = 0;
+            int RChannel, GChannel, BChannel;
+            for (int i = 1; i < original.Width - 1; ++i)
             {
-                for (int j = 1; j < b.Height - 1; j++)
+                for (int j = 1; j < original.Height - 1; ++j)
                 {
 
-                    new_rx = 0;
-                    new_ry = 0;
-                    new_gx = 0;
-                    new_gy = 0;
-                    new_bx = 0;
-                    new_by = 0;
-                    rc = 0;
-                    gc = 0;
-                    bc = 0;
-
-                    for (int wi = -1; wi < 2; wi++)
+                    Rx = 0;
+                    Ry = 0;
+                    Gx = 0;
+                    Gy = 0;
+                    Bx = 0;
+                    By = 0;
+                    RChannel = 0;
+                    GChannel = 0;
+                    BChannel = 0;
+                    for (int x = -1; x < 2; ++x)
                     {
-                        for (int hw = -1; hw < 2; hw++)
+                        for (int y = -1; y < 2; ++y)
                         {
-                            rc = allPixR[i + hw, j + wi];
-                            new_rx += gx[wi + 1, hw + 1] * rc;
-                            new_ry += gy[wi + 1, hw + 1] * rc;
+                            RChannel = R[i + y, j + x];
+                            Rx += GX[x + 1, y + 1] * RChannel;
+                            Ry += GY[x + 1, y + 1] * RChannel;
 
-                            gc = allPixG[i + hw, j + wi];
-                            new_gx += gx[wi + 1, hw + 1] * gc;
-                            new_gy += gy[wi + 1, hw + 1] * gc;
+                            GChannel = G[i + y, j + x];
+                            Gx += GX[x + 1, y + 1] * GChannel;
+                            Gy += GY[x + 1, y + 1] * GChannel;
 
-                            bc = allPixB[i + hw, j + wi];
-                            new_bx += gx[wi + 1, hw + 1] * bc;
-                            new_by += gy[wi + 1, hw + 1] * bc;
+                            BChannel = B[i + y, j + x];
+                            Bx += GX[x + 1, y + 1] * BChannel;
+                            By += GY[x + 1, y + 1] * BChannel;
                         }
                     }
-                    if (new_rx * new_rx + new_ry * new_ry > limit || new_gx * new_gx + new_gy * new_gy > limit || new_bx * new_bx + new_by * new_by > limit)
-                    {
-                        //bb.SetPixel(i, j, Color.Black);
-                        bb.SetPixel (i, j, Color.FromArgb(allPixR[i,j],allPixG[i,j],allPixB[i,j]));
-                    }
-                    else
-                    {
-                        bb.SetPixel(i, j, Color.White);
-                    }
+                    result.SetPixel(i, j, Color.FromArgb(SatureCast(Rx+Ry), SatureCast(Gx + Gy), SatureCast(Bx + By)));
                 }
             }
-            return bb;
+            return result;
+        }
+
+        private static int SatureCast(double number)
+        {
+            if(number < 0)
+            {
+                return 0;
+            }
+            if(number > 255)
+            {
+                return 255;
+            }
+            return (int)number;
         }
     }
 }
